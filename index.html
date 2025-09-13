@@ -1,65 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>NFL Fantasy Trivia</title>
+
+  <!-- Mobile-friendly viewport + iOS status bar color -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#10141a" />
+
   <style>
+    :root{
+      --bg:#10141a;
+      --panel:#111827;
+      --text:#f5f5f5;
+      --muted:#bbb;
+      --accent:#2c7be5;
+      --accent-hover:#1a5bb8;
+      --radius:12px;
+      --shadow:0 6px 24px rgba(0,0,0,.35);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height: 100%; }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #10141a;
-      color: #f5f5f5;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Layout wrapper */
+    .container{
+      max-width: 960px;
+      margin: 0 auto;
+      min-height: 100svh;                 /* safe on mobile with dynamic bars */
+      padding: 24px clamp(16px, 4vw, 32px) 48px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      gap: 14px;
       text-align: center;
     }
-    h1 {
-      margin-bottom: 10px;
+
+    /* Headings */
+    h1{
+      margin: 0 0 6px 0;
+      font-weight: 700;
+      font-size: clamp(22px, 4.6vw, 36px);
+      letter-spacing: .2px;
     }
-    #playerPosition {
-      font-size: 18px;
-      color: #bbb;
-      margin-bottom: 20px;
+    #playerPosition{
+      margin: 0 0 8px 0;
+      color: var(--muted);
+      font-size: clamp(14px, 3.6vw, 18px);
     }
-    img {
-      max-width: 500px;
-      border: 2px solid #444;
-      border-radius: 8px;
-      margin-bottom: 20px;
+
+    /* Image panel */
+    .image-card{
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: clamp(8px, 2.4vw, 12px);
+      box-shadow: var(--shadow);
+      max-width: 100%;
+      width: min(720px, 100%);
     }
-    input, button {
-      padding: 10px;
+    #playerImage{
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+    }
+
+    /* Controls */
+    .controls{
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 8px;
+      width: 100%;
+      max-width: 640px;
+    }
+    .controls input[type="text"]{
+      flex: 1 1 260px;
+      min-width: 0;
+      padding: 12px 14px;
       font-size: 16px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
     }
-    button {
-      background-color: #2c7be5;
-      color: white;
+    .controls input::placeholder{ color:#8b93a3; }
+
+    .controls button{
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
       cursor: pointer;
+      touch-action: manipulation;
     }
-    button:hover {
-      background-color: #1a5bb8;
+    .controls button:hover{ background: var(--accent-hover); }
+    .controls button:active{ transform: translateY(1px); }
+
+    /* Feedback */
+    #feedback{
+      margin-top: 8px;
+      font-size: clamp(16px, 3.6vw, 18px);
+      min-height: 1.5em;                 /* prevents layout jump */
     }
-    #feedback {
-      margin-top: 15px;
-      font-size: 18px;
+
+    /* Mobile refinements */
+    @media (max-width: 480px){
+      .container{ padding: 20px 14px 36px; gap: 12px; }
+      .controls{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .controls button{ width: 100%; }
+    }
+
+    /* Reduce iOS tap highlight + focus visibility */
+    a, button, input{ -webkit-tap-highlight-color: transparent; }
+    input:focus-visible, button:focus-visible{
+      outline: 2px solid #60a5fa; outline-offset: 2px;
     }
   </style>
 </head>
 <body>
-  <h1>Daily NFL Fantasy Trivia</h1>
-  <p id="playerPosition"></p>
-  <img id="playerImage" src="" alt="Player Stats History">
-  
-  <div>
-    <input type="text" id="guessInput" placeholder="Enter player name">
-    <button onclick="submitGuess()">Guess</button>
+  <div class="container">
+    <h1>Daily NFL Fantasy Trivia</h1>
+    <p id="playerPosition">Position:</p>
+
+    <div class="image-card">
+      <img id="playerImage" src="" alt="Player Stats History" />
+    </div>
+
+    <form class="controls" id="guessForm" autocomplete="off">
+      <label for="guessInput" class="sr-only" style="position:absolute;left:-9999px;">Player name</label>
+      <input type="text" id="guessInput" placeholder="Enter player name" inputmode="text" autocapitalize="words" autocomplete="off" />
+      <button type="submit">Guess</button>
+    </form>
+
+    <p id="feedback" aria-live="polite" role="status"></p>
   </div>
-  <p id="feedback"></p>
 
   <script>
     // List of players, images, and positions
@@ -73,31 +168,52 @@
       { answer: "Amari Cooper", position: "WR", img: "images/player7.png" }
     ];
 
-    // Pick one based on today's date
+    // Pick one based on today's day (0-6). You can change this logic later.
     const today = new Date();
     const index = today.getDay();
-    //const todayTrivia = triviaData[index];
-    //Hardcoding index for testing
+
+    // For testing, you had this hard-coded. Keep or switch to day-based:
+    // const todayTrivia = triviaData[index];
     const todayTrivia = triviaData[4];
 
     // Set image and position text
-    document.getElementById("playerImage").src = todayTrivia.img;
-    document.getElementById("playerPosition").textContent = `Position: ${todayTrivia.position}`;
+    const imgEl = document.getElementById("playerImage");
+    const posEl = document.getElementById("playerPosition");
+    const feedbackEl = document.getElementById("feedback");
+    const inputEl = document.getElementById("guessInput");
+    const formEl = document.getElementById("guessForm");
+
+    imgEl.src = todayTrivia.img;
+    imgEl.alt = `Career fantasy table for mystery player (${todayTrivia.position})`;
+    posEl.textContent = `Position: ${todayTrivia.position}`;
 
     let attempts = 0;
 
-    function submitGuess() {
-      const guess = document.getElementById("guessInput").value.trim();
+    function submitGuess(){
+      const guess = inputEl.value.trim();
+      if (!guess) return;
+
       attempts++;
 
       if (guess.toLowerCase() === todayTrivia.answer.toLowerCase()) {
-        document.getElementById("feedback").textContent = "✅ Correct!";
+        feedbackEl.textContent = "✅ Correct!";
       } else if (attempts < 3) {
-        document.getElementById("feedback").textContent = `❌ Wrong! Try again. (${3 - attempts} left)`;
+        feedbackEl.textContent = `❌ Wrong! Try again. (${3 - attempts} left)`;
       } else {
-        document.getElementById("feedback").textContent = `❌ Out of guesses! The answer was: ${todayTrivia.answer}`;
+        feedbackEl.textContent = `❌ Out of guesses! The answer was: ${todayTrivia.answer}`;
       }
     }
+
+    // Handle submit + Enter key
+    formEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitGuess();
+    });
+
+    // Quality-of-life: focus the input on load
+    window.addEventListener("DOMContentLoaded", () => {
+      inputEl.focus({ preventScroll: true });
+    });
   </script>
 </body>
 </html>
