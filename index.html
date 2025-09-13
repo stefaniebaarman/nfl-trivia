@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NFL Fantasy Trivia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #10141a;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    #playerPosition {
+      font-size: 18px;
+      color: #bbb;
+      margin-bottom: 20px;
+    }
+    img {
+      max-width: 500px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #2c7be5;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1a5bb8;
+    }
+    #feedback {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily NFL Fantasy Trivia</h1>
+  <p id="playerPosition"></p>
+  <img id="playerImage" src="" alt="Player Stats History">
+  
+  <div>
+    <input type="text" id="guessInput" placeholder="Enter player name">
+    <button onclick="submitGuess()">Guess</button>
+  </div>
+  <p id="feedback"></p>
+
+  <script>
+    // List of players, images, and positions
+    const triviaData = [
+      { answer: "Kareem Hunt", position: "RB", img: "images/player1.png" },
+      { answer: "Rhamondre Stevenson", position: "RB", img: "images/player2.png" },
+      { answer: "Jamaal Williams", position: "RB", img: "images/player3.png" },
+      { answer: "Cordarrelle Patterson", position: "RB/WR", img: "images/player4.png" },
+      { answer: "Dalvin Cook", position: "RB", img: "images/player5.png" },
+      { answer: "Diontae Johnson", position: "WR", img: "images/player6.png" },
+      { answer: "Amari Cooper", position: "WR", img: "images/player7.png" }
+    ];
+
+    // Pick one based on today's date
+    const today = new Date();
+    const index = today.getDay();
+    //const todayTrivia = triviaData[index];
+    //Hardcoding index for testing
+    const todayTrivia = triviaData[4];
+
+    // Set image and position text
+    document.getElementById("playerImage").src = todayTrivia.img;
+    document.getElementById("playerPosition").textContent = `Position: ${todayTrivia.position}`;
+
+    let attempts = 0;
+
+    function submitGuess() {
+      const guess = document.getElementById("guessInput").value.trim();
+      attempts++;
+
+      if (guess.toLowerCase() === todayTrivia.answer.toLowerCase()) {
+        document.getElementById("feedback").textContent = "✅ Correct!";
+      } else if (attempts < 3) {
+        document.getElementById("feedback").textContent = `❌ Wrong! Try again. (${3 - attempts} left)`;
+      } else {
+        document.getElementById("feedback").textContent = `❌ Out of guesses! The answer was: ${todayTrivia.answer}`;
+      }
+    }
+  </script>
+</body>
+</html>
