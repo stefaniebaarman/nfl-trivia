@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>NFL Fantasy Trivia</title>
 
-  <!-- Mobile-friendly viewport + iOS status bar color -->
+  <!-- Mobile-friendly viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#10141a" />
 
@@ -32,11 +32,10 @@
       -webkit-text-size-adjust: 100%;
     }
 
-    /* Layout wrapper */
     .container{
       max-width: 960px;
       margin: 0 auto;
-      min-height: 100svh;                 /* safe on mobile with dynamic bars */
+      min-height: 100svh;
       padding: 24px clamp(16px, 4vw, 32px) 48px;
       display: flex;
       flex-direction: column;
@@ -46,12 +45,10 @@
       text-align: center;
     }
 
-    /* Headings */
     h1{
       margin: 0 0 6px 0;
       font-weight: 700;
       font-size: clamp(22px, 4.6vw, 36px);
-      letter-spacing: .2px;
     }
     #playerPosition{
       margin: 0 0 8px 0;
@@ -59,25 +56,26 @@
       font-size: clamp(14px, 3.6vw, 18px);
     }
 
-    /* Image panel */
     .image-card{
+      width: 100%;
+      margin: 0 auto;
       background: var(--panel);
       border-radius: var(--radius);
       padding: clamp(8px, 2.4vw, 12px);
       box-shadow: var(--shadow);
-      max-width: 100%;
-      width: min(720px, 100%);
     }
+
     #playerImage{
       display: block;
       width: 100%;
       height: auto;
+      max-width: 100%;
       border: 1px solid #1f2937;
       border-radius: 10px;
     }
 
     /* Controls */
-    .controls{
+    .controls {
       display: flex;
       gap: 8px;
       justify-content: center;
@@ -86,21 +84,21 @@
       width: 100%;
       max-width: 640px;
     }
-    .controls input[type="text"]{
-      flex: 1 1 260px;
-      min-width: 0;
-      padding: 12px 14px;
+
+    .controls input[type="text"] {
+      flex: 1 1 auto;
+      padding: 14px 16px;
       font-size: 16px;
       border-radius: 10px;
       border: 1px solid #1f2937;
       background: #0b1220;
       color: var(--text);
-      outline: none;
+      min-width: 0;
     }
-    .controls input::placeholder{ color:#8b93a3; }
+    .controls input::placeholder { color:#8b93a3; }
 
-    .controls button{
-      padding: 12px 16px;
+    .controls button {
+      padding: 14px 18px;
       font-size: 16px;
       border: 0;
       border-radius: 10px;
@@ -108,30 +106,30 @@
       color: #fff;
       font-weight: 600;
       cursor: pointer;
-      touch-action: manipulation;
     }
-    .controls button:hover{ background: var(--accent-hover); }
-    .controls button:active{ transform: translateY(1px); }
+    .controls button:hover { background: var(--accent-hover); }
+    .controls button:active { transform: translateY(1px); }
 
-    /* Feedback */
     #feedback{
       margin-top: 8px;
       font-size: clamp(16px, 3.6vw, 18px);
-      min-height: 1.5em;                 /* prevents layout jump */
+      min-height: 1.5em;
     }
 
     /* Mobile refinements */
     @media (max-width: 480px){
       .container{ padding: 20px 14px 36px; gap: 12px; }
-      .controls{
+      .controls {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
       }
-      .controls button{ width: 100%; }
+      .controls input[type="text"],
+      .controls button {
+        width: 100%;
+      }
     }
 
-    /* Reduce iOS tap highlight + focus visibility */
     a, button, input{ -webkit-tap-highlight-color: transparent; }
     input:focus-visible, button:focus-visible{
       outline: 2px solid #60a5fa; outline-offset: 2px;
@@ -157,7 +155,6 @@
   </div>
 
   <script>
-    // List of players, images, and positions
     const triviaData = [
       { answer: "Kareem Hunt", position: "RB", img: "images/player1.png" },
       { answer: "Rhamondre Stevenson", position: "RB", img: "images/player2.png" },
@@ -168,15 +165,11 @@
       { answer: "Amari Cooper", position: "WR", img: "images/player7.png" }
     ];
 
-    // Pick one based on today's day (0-6). You can change this logic later.
     const today = new Date();
     const index = today.getDay();
-
-    // For testing, you had this hard-coded. Keep or switch to day-based:
     // const todayTrivia = triviaData[index];
-    const todayTrivia = triviaData[4];
+    const todayTrivia = triviaData[4]; // hardcoded for testing
 
-    // Set image and position text
     const imgEl = document.getElementById("playerImage");
     const posEl = document.getElementById("playerPosition");
     const feedbackEl = document.getElementById("feedback");
@@ -184,7 +177,6 @@
     const formEl = document.getElementById("guessForm");
 
     imgEl.src = todayTrivia.img;
-    imgEl.alt = `Career fantasy table for mystery player (${todayTrivia.position})`;
     posEl.textContent = `Position: ${todayTrivia.position}`;
 
     let attempts = 0;
@@ -192,9 +184,7 @@
     function submitGuess(){
       const guess = inputEl.value.trim();
       if (!guess) return;
-
       attempts++;
-
       if (guess.toLowerCase() === todayTrivia.answer.toLowerCase()) {
         feedbackEl.textContent = "✅ Correct!";
       } else if (attempts < 3) {
@@ -204,13 +194,11 @@
       }
     }
 
-    // Handle submit + Enter key
     formEl.addEventListener("submit", (e) => {
       e.preventDefault();
       submitGuess();
     });
 
-    // Quality-of-life: focus the input on load
     window.addEventListener("DOMContentLoaded", () => {
       inputEl.focus({ preventScroll: true });
     });
